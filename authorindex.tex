@@ -1,0 +1,22 @@
+% Creating an index of all authors in a bibliography
+%
+%   Create authorindex.tex (this file)
+%   Have the \addbibresource below point to your .bib file
+%   pdflatex authorindex
+%   /Library/TeX/texbin/authorindex authorindex (or use path for wherever your authorindex command lives)
+%   pdflatex authorindex
+%   cat authorindex.ain | perl -nle 'print $1 if /\[\s*(.*?)\s*\]/' > authors.txt
+%
+% File authors.txt now contains all the authors in the file
+
+\documentclass{article}
+\usepackage[style=ieee,citestyle=numeric-comp,natbib=true,backend=bibtex,url=false,doi=false,isbn=false,useprefix=true,autocite=inline,sortcites=true,labelnumber=true,urldate=long,indexing=bib]{biblatex}
+\usepackage{authorindex}
+
+\addbibresource{my_publications.bib}   % <==== Your bib file goes here
+
+\begin{document}
+\aicite{*}
+\printbibliography
+\printauthorindex
+\end{document}
