@@ -1,11 +1,17 @@
-# create_coauthor_list
-Streamlining creation of a list of co-authors and their institutions from a bibliography of your publications
+# Bibliography tools
 
-For NSF proposals it is required to provide a list of collaborators and other affiliations (COA) in an [Excel file](https://www.nsf.gov/bfa/dias/policy/coa/coa_template.xlsx), https://www.nsf.gov/bfa/dias/policy/coa/coa_template.xlsx. And getting a list of all your recent collaborators can be a serious pain in the neck.  Here is some stuff I've written that makes it a lot easier, even if it's a bit kludgy.
+1. Streamlining creation of a list of co-authors and their institutions from a bibliography of your publications.
+2. Finding BibTeX entries for references in text form regardless of the format.
 
 _Author: Philip Resnik, University of Maryland (resnik@umd.edu)_
 
-## Have a .bib file containing your publications
+## Creating a co-author list
+
+For NSF proposals it is required to provide a list of collaborators and other affiliations (COA) in an [Excel file](https://www.nsf.gov/bfa/dias/policy/coa/coa_template.xlsx), https://www.nsf.gov/bfa/dias/policy/coa/coa_template.xlsx. And getting a list of all your recent collaborators can be a serious pain in the neck.  Here is some stuff I've written that makes it a lot easier, even if it's a bit kludgy.
+
+
+
+### Have a .bib file containing your publications
 
 If you don't use BibTex, our friend ChatGPT will make it easy for you
 to take whatever format you have your citations in (e.g. copy/paste
@@ -20,8 +26,15 @@ Create bibtex entries for the following papers:
 Depending how many refs you've got you may need to do this in multiple
 batches since ChatGPT has limits on the size of any single prompt.
 
+As an alternative, you can look up references that are in text format (one per line) on Google Scholar to get BibTex entries:
 
-## Get all co-authors from your .bib file
+```
+refs2bibtex.py < refs.txt > mybibfile.bib
+```
+
+
+
+### Get all co-authors from your .bib file
 
 Make a copy of `authorindex.tex` and follow the instructions in
 the header. If you need to sort your .bib file chronologically so you
@@ -45,12 +58,12 @@ yourself.
 
 
 
-## Get the institutions for your co-authors
+### Get the institutions for your co-authors
 
 Institutions are not required in the NSF COA template, but it's a nice
 thing to have..
 
-### Get co-author work info from Google Scholar
+#### Get co-author work info from Google Scholar
 ```
 python fetch_scholar_info.py < authors.txt > Collaborator_institutions.txt
 ```
@@ -67,14 +80,14 @@ Note that the script takes an optional `--sleep N` options to sleep N
 seconds between hitting Google Scholar to avoid rate limiting or
 blocking. Defaults to 10 but 5 seems to work just as well.
 
-### Edit the file that resulted
+#### Edit the file that resulted
 
 The Google Scholar profile pages can list multiple matches, especially
 for common names. You'll want to manually review/edit so each author
 has just one line.
 
 
-### Combine your author list and the Scholar info
+#### Combine your author list and the Scholar info
 
 Sometimes the info pulled back from Google Scholar includes both a
 position and an institution, e.g. "Professor, Univ of Maryland". To
@@ -85,7 +98,7 @@ as they appear on your co-author list:
 python join_scholar_info.py authors.txt Collaborator_institutions.txt > coa_info.csv
 ```
 
-### Manually edit the resulting CSV file
+#### Manually edit the resulting CSV file
 
 The code isn't perfect, e.g. for institutions you might see the
 department and institution together. It's good enough that it's not
@@ -93,12 +106,12 @@ worth it (to me) to mess with trying to get the code perfect. I used
 CSV rather than XLSX so it would be easy to fix things in a text
 editor if that's preferred over editing in Excel.
 
-### Delete the temporary `profiles` directory
+#### Delete the temporary `profiles` directory
 
 The `fetch_scholar_info.py` script created a temporary directory for the HTML author profiles pulled from Google Scholar. Since that can take some time, to be cautious the code doesn't delete that temporary directory. At this point you should be able to go ahead and delete it. 
 
 
-## Copy info into the COA template
+### Copy info into the COA template
 
 At this point either you've got `authors.txt` (if you didn't add
 institutions), or `coa_info.csv` (if you did). Either way, you can
@@ -106,6 +119,17 @@ open the file with Excel and then just copy/paste info into the NSF
 COA Excel template.
 
 Voila!
+
+## Stand-alone lookup of BibTex references on Google Scholar
+
+You can look up references that are in text format (one per line) on Google Scholar to get BibTex entries:
+
+```
+refs2bibtex.py < refs.txt > mybibfile.bib
+```
+
+The `--sleep` parameter can be added to change the default delay between calls to Google Scholar. (Defaults to 10sec.)
+
 
 
 
