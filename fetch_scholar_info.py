@@ -27,6 +27,7 @@ import sys
 import time
 import argparse
 from bs4 import BeautifulSoup
+from tqdm import tqdm
 
 def fetch_author_profile(first_name, last_name, sleep_duration):
     # Creating the author-specific URL
@@ -74,14 +75,17 @@ def main():
 
     # Process each author name from standard input
     print("DEBUG: starting")
-    for line in sys.stdin:
-        if line.strip():
-            first_name, last_name = line.strip().split(', ')
-            file_path = fetch_author_profile(first_name, last_name, sleep_duration)
-            results = extract_university(file_path, first_name, last_name)
-            for result in results:
-                print(result)
-                sys.stdout.flush()
+    for line in tqdm(sys.stdin):
+        try:
+            if line.strip():
+                first_name, last_name = line.strip().split(', ')
+                file_path = fetch_author_profile(first_name, last_name, sleep_duration)
+                results = extract_university(file_path, first_name, last_name)
+                for result in results:
+                    print(result)
+                    sys.stdout.flush()
+        except:
+            sys.stderr.write(f"Error processing line. Skipping. '{line}'\n")
 
 if __name__ == "__main__":
     main()
